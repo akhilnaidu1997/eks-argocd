@@ -8,7 +8,7 @@ metadata:
     tier: frontend
   namespace: roboshop
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
    type: RollingUpdate
    rollingUpdate:
