@@ -1,24 +1,24 @@
 apiVersion: v1 
 kind: ConfigMap
 metadata:
-  name: cart
+  name: shipping
   labels:
     Project: roboshop
-    component: cart
+    component: shipping
     tier: backend
   namespace: roboshop
 data:
-  REDIS_HOST: "redis"
-  CATALOGUE_HOST: "catalogue"
-  CATALOGUE_PORT: "8080"
+  CART_ENDPOINT: "cart:8080"
+  DB_HOST: "mysql"
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cart
+  name: shipping
   labels:
     Project: roboshop
-    component: cart
+    component: shipping
     tier: backend
   namespace: roboshop
 spec:
@@ -32,24 +32,24 @@ spec:
   selector:
     matchLabels:
       Project: roboshop
-      component: cart
+      component: shipping
       tier: backend
   template:
     metadata:
       labels:
         Project: roboshop
-        component: cart
+        component: shipping
         tier: backend
     spec:
       containers:
-      - name: cart
-        image: akhilln/cart:v1
+      - name: shipping
+        image: akhilln/shipping:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
         envFrom:
         - configMapRef:
-            name: cart
+            name: shipping
         readinessProbe:
           httpGet:
             path: /health
@@ -64,16 +64,15 @@ spec:
           initialDelaySeconds: 20
           failureThreshold: 3
           periodSeconds: 10
-    
 ---
 apiVersion: v1 
 kind: Service
 metadata:
-  name: cart
+  name: shipping
 spec:
   selector:
     Project: roboshop
-    component: cart
+    component: shipping
     tier: backend
   ports:
   - protocol: TCP

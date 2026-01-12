@@ -1,55 +1,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
-  namespace: roboshop
+  name: mysql
   labels:
     Project: roboshop
-    component: mongodb
-    tier: db
+    component: mysql
+    tier: db 
+  namespace: roboshop
 spec:
   replicas: 1
   selector:
     matchLabels:
       Project: roboshop
-      component: mongodb
+      component: mysql
       tier: db
   template:
     metadata:
       labels:
         Project: roboshop
-        component: mongodb
+        component: mysql
         tier: db
     spec:
       containers:
-      - name: mongodb
-        image: akhilln/mongodb:v1
+      - name: mysql
+        image: akhilln/mysql:v1
         imagePullPolicy: Always
         ports:
-        - containerPort: 27017
+        - containerPort: 3306
         readinessProbe:
           tcpSocket:
-            port: 27017
-          initialDelaySeconds: 10
+            port: 3306
+          initialDelaySeconds: 20
           periodSeconds: 10
           failureThreshold: 3
         livenessProbe:
           tcpSocket:
-            port: 27017
-          initialDelaySeconds: 20
+            port: 3306
+          initialDelaySeconds: 40
           periodSeconds: 10
           failureThreshold: 3
 ---
 apiVersion: v1 
 kind: Service
 metadata:
-  name: mongodb
+  name: mysql
 spec:
   selector:
     Project: roboshop
-    component: mongodb
+    component: mysql
     tier: db
   ports:
   - protocol: TCP
-    port: 27017
-    targetPort: 27017
+    port: 3306 # service port
+    targetPort: 3306 # contaner port
+      
